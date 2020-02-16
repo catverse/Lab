@@ -3,12 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		CE25331823F9885F004311F0 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE25331723F9885F004311F0 /* App.swift */; };
 		CE25331C23F98860004311F0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE25331B23F98860004311F0 /* Assets.xcassets */; };
+		CE25332A23F98EF6004311F0 /* Balam in Frameworks */ = {isa = PBXBuildFile; productRef = CE25332923F98EF6004311F0 /* Balam */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE25332A23F98EF6004311F0 /* Balam in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -69,6 +71,9 @@
 			dependencies = (
 			);
 			name = macOS;
+			packageProductDependencies = (
+				CE25332923F98EF6004311F0 /* Balam */,
+			);
 			productName = macOS;
 			productReference = CE25332523F98875004311F0 /* Lab.app */;
 			productType = "com.apple.product-type.application";
@@ -96,6 +101,9 @@
 				Base,
 			);
 			mainGroup = CE25330923F9875A004311F0;
+			packageReferences = (
+				CE25332823F98EF6004311F0 /* XCRemoteSwiftPackageReference "balam" */,
+			);
 			productRefGroup = CE25330923F9875A004311F0;
 			projectDirPath = "";
 			projectRoot = "";
@@ -309,6 +317,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CE25332823F98EF6004311F0 /* XCRemoteSwiftPackageReference "balam" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/catverse/balam.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CE25332923F98EF6004311F0 /* Balam */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CE25332823F98EF6004311F0 /* XCRemoteSwiftPackageReference "balam" */;
+			productName = Balam;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CE25330A23F9875A004311F0 /* Project object */;
 }

@@ -1,4 +1,5 @@
 import AppKit
+import Balam
 
 @NSApplicationMain final class App: NSApplication, NSApplicationDelegate {
     required init?(coder: NSCoder) { nil }
