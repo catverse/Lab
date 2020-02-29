@@ -10,7 +10,7 @@ final class Launch: NSWindow {
         toolbar!.showsBaselineSeparator = false
         collectionBehavior = .fullScreenNone
         isReleasedWhenClosed = false
-        
+        contentView = NSVisualEffectView()
     }
     
     override func close() {
