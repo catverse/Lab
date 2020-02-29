@@ -1,5 +1,4 @@
 import AppKit
-import Balam
 
 @NSApplicationMain final class App: NSApplication, NSApplicationDelegate {
     required init?(coder: NSCoder) { nil }
@@ -9,6 +8,12 @@ import Balam
     }
     
     func applicationWillFinishLaunching(_: Notification) {
-        NSWindow().makeKeyAndOrderFront(nil)
+        launch()
+    }
+    
+    func launch() {
+        if windows.isEmpty {
+            Launch().makeKeyAndOrderFront(nil)
+        }
     }
 }

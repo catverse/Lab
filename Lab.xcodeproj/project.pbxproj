@@ -10,6 +10,8 @@
 		CE25331823F9885F004311F0 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE25331723F9885F004311F0 /* App.swift */; };
 		CE25331C23F98860004311F0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE25331B23F98860004311F0 /* Assets.xcassets */; };
 		CE25332A23F98EF6004311F0 /* Balam in Frameworks */ = {isa = PBXBuildFile; productRef = CE25332923F98EF6004311F0 /* Balam */; };
+		CE661857240A8EF7009DAD5B /* Window.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE661856240A8EF7009DAD5B /* Window.swift */; };
+		CE661859240A920D009DAD5B /* Launch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE661858240A920D009DAD5B /* Launch.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +22,8 @@
 		CE25332523F98875004311F0 /* Lab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lab.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE25332623F98CA0004311F0 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		CE25332723F98CA0004311F0 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		CE661856240A8EF7009DAD5B /* Window.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Window.swift; sourceTree = "<group>"; };
+		CE661858240A920D009DAD5B /* Launch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Launch.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +54,8 @@
 				CE25332123F98860004311F0 /* macOS.entitlements */,
 				CE25332023F98860004311F0 /* Info.plist */,
 				CE25331723F9885F004311F0 /* App.swift */,
+				CE661858240A920D009DAD5B /* Launch.swift */,
+				CE661856240A8EF7009DAD5B /* Window.swift */,
 				CE25331B23F98860004311F0 /* Assets.xcassets */,
 			);
 			path = macOS;
@@ -130,6 +136,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE25331823F9885F004311F0 /* App.swift in Sources */,
+				CE661859240A920D009DAD5B /* Launch.swift in Sources */,
+				CE661857240A8EF7009DAD5B /* Window.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
