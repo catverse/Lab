@@ -94,6 +94,9 @@ final class Launch: NSWindow {
     }
     
     @objc private func click(_ item: Item) {
+        var bookmark = item.bookmark
+        bookmark.edited = .init()
+        graph.update(bookmark)
         select(item.bookmark)
     }
 }
@@ -106,10 +109,10 @@ private final class Item: Control {
         self.bookmark = bookmark
         super.init(target, action)
         
-        let name = Label(bookmark.url.deletingPathExtension().lastPathComponent, .medium(15))
+        let name = Label(bookmark.id.deletingPathExtension().lastPathComponent, .medium(15))
         addSubview(name)
         
-        let url = Label(bookmark.url.deletingLastPathComponent().path, .light(11))
+        let url = Label(bookmark.id.deletingLastPathComponent().path, .light(11))
         url.alphaValue = 0.75
         addSubview(url)
         
