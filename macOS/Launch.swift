@@ -11,6 +11,8 @@ final class Launch: NSWindow {
         collectionBehavior = .fullScreenNone
         isReleasedWhenClosed = false
         contentView = NSVisualEffectView()
+        
+        let title = Label(.key("Launch.title"), .regular(20), <#T##color: NSColor##NSColor#>)
     }
     
     override func close() {
