@@ -8,12 +8,6 @@ import AppKit
     }
     
     func applicationWillFinishLaunching(_: Notification) {
-        launch()
-    }
-    
-    func launch() {
-        if windows.isEmpty {
-            Launch().makeKeyAndOrderFront(nil)
-        }
+        Launch().makeKeyAndOrderFront(nil)
     }
 }

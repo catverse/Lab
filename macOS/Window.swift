@@ -1,7 +1,10 @@
 import AppKit
 
 final class Window: NSWindow {
-    init() {
+    private let bookmark: Bookmark
+    
+    init(_ bookmark: Bookmark) {
+        self.bookmark = bookmark
         super.init(contentRect: .init(x: 0, y: 0, width: 600, height: 400), styleMask: [.borderless, .miniaturizable, .resizable, .closable, .titled, .unifiedTitleAndToolbar, .fullSizeContentView], backing: .buffered, defer: false)
         minSize = .init(width: 200, height: 200)
         center()
@@ -14,6 +17,9 @@ final class Window: NSWindow {
     }
     
     override func close() {
-        (NSApp as! App).launch()
+        if NSApp.windows.count < 2 {
+            Launch().makeKeyAndOrderFront(nil)
+        }
+        super.close()
     }
 }

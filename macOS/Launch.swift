@@ -1,6 +1,11 @@
+import Balam
+import Combine
 import AppKit
 
 final class Launch: NSWindow {
+    private var graph: Graph!
+    private var subs = Set<AnyCancellable>()
+    
     init() {
         super.init(contentRect: .init(x: 0, y: 0, width: 600, height: 300), styleMask: [.borderless, .closable, .titled, .unifiedTitleAndToolbar, .fullSizeContentView], backing: .buffered, defer: false)
         center()
@@ -15,6 +20,7 @@ final class Launch: NSWindow {
         contentView!.addSubview(title)
         
         let button = Button(.key("Launch.button"), self, #selector(open))
+        button.isHidden = true
         contentView!.addSubview(button)
         
         let blur = NSVisualEffectView()
@@ -40,6 +46,27 @@ final class Launch: NSWindow {
         scroll.bottomAnchor.constraint(equalTo: blur.bottomAnchor).isActive = true
         scroll.rightAnchor.constraint(equalTo: blur.rightAnchor).isActive = true
         scroll.widthAnchor.constraint(equalTo: blur.widthAnchor).isActive = true
+        scroll.width.constraint(equalTo: blur.widthAnchor).isActive = true
+        
+        Balam.graph("Lab").sink { [weak self] in
+            guard let self = self else { return }
+            self.graph = $0
+            $0.nodes(Bookmark.self).receive(on: DispatchQueue.main).sink { [weak self] in
+                guard let self = self else { return }
+                button.isHidden = false
+                var top = scroll.top
+                $0.sorted { $0.edited < $1.edited }.forEach {
+                    let item = Item($0, self, #selector(self.click(_:)))
+                    scroll.add(item)
+                    
+                    item.topAnchor.constraint(equalTo: top).isActive = true
+                    item.leftAnchor.constraint(equalTo: scroll.left).isActive = true
+                    item.widthAnchor.constraint(equalTo: blur.widthAnchor).isActive = true
+                    top = item.bottomAnchor
+                }
+                scroll.bottom.constraint(greaterThanOrEqualTo: top).isActive = true
+            }.store(in: &self.subs)
+        }.store(in: &subs)
     }
     
     override func close() {
@@ -50,7 +77,48 @@ final class Launch: NSWindow {
         }
     }
     
+    private func select(_ bookmark: Bookmark) {
+        Window(bookmark).makeKeyAndOrderFront(nil)
+        close()
+    }
+    
     @objc private func open() {
+        let browse = NSOpenPanel()
+        browse.allowedFileTypes = ["balam"]
+        browse.begin { [weak self] in
+            guard $0 == .OK, let url = browse.url else { return }
+            let bookmark = Bookmark(url)
+            self?.graph.add(bookmark)
+            self?.select(bookmark)
+        }
+    }
+    
+    @objc private func click(_ item: Item) {
+        select(item.bookmark)
+    }
+}
+
+private final class Item: Control {
+    fileprivate let bookmark: Bookmark
+    
+    required init?(coder: NSCoder) { nil }
+    init(_ bookmark: Bookmark, _ target: AnyObject, _ action: Selector) {
+        self.bookmark = bookmark
+        super.init(target, action)
         
+        let name = Label(bookmark.url.deletingPathExtension().lastPathComponent, .medium(15))
+        addSubview(name)
+        
+        let url = Label(bookmark.url.deletingLastPathComponent().path, .light(11))
+        url.alphaValue = 0.75
+        addSubview(url)
+        
+        heightAnchor.constraint(equalToConstant: 80).isActive = true
+        
+        name.topAnchor.constraint(equalTo: topAnchor, constant: 20).isActive = true
+        name.leftAnchor.constraint(equalTo: leftAnchor, constant: 20).isActive = true
+        
+        url.topAnchor.constraint(equalTo: name.bottomAnchor, constant: 5).isActive = true
+        url.leftAnchor.constraint(equalTo: name.leftAnchor).isActive = true
     }
 }
