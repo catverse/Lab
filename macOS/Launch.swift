@@ -102,18 +102,20 @@ final class Launch: NSWindow {
 }
 
 private final class Item: Control {
+    private var opacity = CGFloat(0)
     fileprivate let bookmark: Bookmark
     
     required init?(coder: NSCoder) { nil }
     init(_ bookmark: Bookmark, _ target: AnyObject, _ action: Selector) {
         self.bookmark = bookmark
         super.init(target, action)
+        wantsLayer = true
         
         let name = Label(bookmark.id.deletingPathExtension().lastPathComponent, .medium(15))
         addSubview(name)
         
         let url = Label(bookmark.id.deletingLastPathComponent().path, .light(11))
-        url.alphaValue = 0.75
+        url.textColor = .secondaryLabelColor
         addSubview(url)
         
         heightAnchor.constraint(equalToConstant: 80).isActive = true
@@ -123,5 +125,19 @@ private final class Item: Control {
         
         url.topAnchor.constraint(equalTo: name.bottomAnchor, constant: 5).isActive = true
         url.leftAnchor.constraint(equalTo: name.leftAnchor).isActive = true
+    }
+    
+    override func updateLayer() {
+        layer!.backgroundColor = NSColor.controlAccentColor.withAlphaComponent(opacity).cgColor
+    }
+    
+    override func hoverOn() {
+        opacity = 0.6
+        updateLayer()
+    }
+    
+    override func hoverOff() {
+        opacity = 0
+        updateLayer()
     }
 }
