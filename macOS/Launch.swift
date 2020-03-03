@@ -115,6 +115,7 @@ private final class Item: Control {
         addSubview(name)
         
         let url = Label(bookmark.id.deletingLastPathComponent().path, .light(11))
+        url.lineBreakMode = .byTruncatingMiddle
         url.textColor = .secondaryLabelColor
         addSubview(url)
         
@@ -125,6 +126,7 @@ private final class Item: Control {
         
         url.topAnchor.constraint(equalTo: name.bottomAnchor, constant: 5).isActive = true
         url.leftAnchor.constraint(equalTo: name.leftAnchor).isActive = true
+        url.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor, constant: -10).isActive = true
     }
     
     override func updateLayer() {

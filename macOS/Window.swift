@@ -1,10 +1,12 @@
+import Balam
 import AppKit
+import Combine
 
 final class Window: NSWindow {
-    private let bookmark: Bookmark
+    private var url: URL?
+    private var sub: AnyCancellable?
     
     init(_ bookmark: Bookmark) {
-        self.bookmark = bookmark
         super.init(contentRect: .init(x: 0, y: 0, width: 900, height: 600), styleMask: [.borderless, .miniaturizable, .resizable, .closable, .titled, .unifiedTitleAndToolbar, .fullSizeContentView], backing: .buffered, defer: false)
         minSize = .init(width: 300, height: 300)
         center()
@@ -46,68 +48,67 @@ final class Window: NSWindow {
         title.leftAnchor.constraint(equalTo: contentView!.leftAnchor, constant: 80).isActive = true
         title.centerYAnchor.constraint(equalTo: blur.centerYAnchor).isActive = true
         
-        var top = sideScroll.top
-        [bookmark, bookmark, bookmark].forEach {
-            let item = Item($0, self, #selector(self.click(_:)))
-            sideScroll.add(item)
-            
-            item.topAnchor.constraint(equalTo: top).isActive = true
-            item.leftAnchor.constraint(equalTo: sideScroll.left).isActive = true
-            item.widthAnchor.constraint(equalTo: sideScroll.width).isActive = true
-            top = item.bottomAnchor
+        var stale = false
+        guard
+            let url = try? URL(resolvingBookmarkData: bookmark.access, options: .withSecurityScope, bookmarkDataIsStale: &stale),
+            url.startAccessingSecurityScopedResource()
+        else { return }
+        self.url = url
+        
+        sub = Balam.nodes(url).receive(on: DispatchQueue.main).sink { [weak self] in
+            guard let self = self else { return }
+            var top = sideScroll.top
+            $0.forEach {
+                let item = Item($0, self, #selector(self.click(_:)))
+                sideScroll.add(item)
+                
+                item.topAnchor.constraint(equalTo: top).isActive = true
+                item.leftAnchor.constraint(equalTo: sideScroll.left).isActive = true
+                item.widthAnchor.constraint(equalTo: sideScroll.width).isActive = true
+                top = item.bottomAnchor
+            }
+            sideScroll.bottom.constraint(greaterThanOrEqualTo: top).isActive = true
         }
-        sideScroll.bottom.constraint(greaterThanOrEqualTo: top).isActive = true
     }
     
     override func close() {
         if NSApp.windows.count < 2 {
             Launch().makeKeyAndOrderFront(nil)
         }
+        url?.stopAccessingSecurityScopedResource()
         super.close()
     }
     
     @objc private func click(_ item: Item) {
-
+        item.selected = true
     }
 }
 
 private final class Item: Control {
-    private var opacity = CGFloat(0)
-    fileprivate let bookmark: Bookmark
+    fileprivate var selected = false {
+        didSet {
+            updateLayer()
+        }
+    }
+    
+    fileprivate let node: Node
     
     required init?(coder: NSCoder) { nil }
-    init(_ bookmark: Bookmark, _ target: AnyObject, _ action: Selector) {
-        self.bookmark = bookmark
+    init(_ node: Node, _ target: AnyObject, _ action: Selector) {
+        self.node = node
         super.init(target, action)
         wantsLayer = true
         
-        let name = Label(bookmark.id.deletingPathExtension().lastPathComponent, .medium(15))
+        let name = Label(node.name, .medium(15))
         addSubview(name)
         
-        let url = Label(bookmark.id.deletingLastPathComponent().path, .light(11))
-        url.textColor = .secondaryLabelColor
-        addSubview(url)
+        heightAnchor.constraint(equalToConstant: 50).isActive = true
         
-        heightAnchor.constraint(equalToConstant: 80).isActive = true
-        
-        name.topAnchor.constraint(equalTo: topAnchor, constant: 20).isActive = true
+        name.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         name.leftAnchor.constraint(equalTo: leftAnchor, constant: 20).isActive = true
-        
-        url.topAnchor.constraint(equalTo: name.bottomAnchor, constant: 5).isActive = true
-        url.leftAnchor.constraint(equalTo: name.leftAnchor).isActive = true
     }
     
     override func updateLayer() {
-        layer!.backgroundColor = NSColor.controlAccentColor.withAlphaComponent(opacity).cgColor
-    }
-    
-    override func hoverOn() {
-        opacity = 0.6
-        updateLayer()
-    }
-    
-    override func hoverOff() {
-        opacity = 0
-        updateLayer()
+        layer!.backgroundColor = selected ? NSColor.controlAccentColor.cgColor : .clear
     }
 }
