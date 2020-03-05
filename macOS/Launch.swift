@@ -51,6 +51,7 @@ final class Launch: NSWindow {
         Balam.graph("Lab").sink { [weak self] in
             guard let self = self else { return }
             self.graph = $0
+            $0.remove(Bookmark.self) { !FileManager.default.fileExists(atPath: $0.id.path) }
             $0.nodes(Bookmark.self).receive(on: DispatchQueue.main).sink { [weak self] in
                 guard let self = self else { return }
                 button.isHidden = false
