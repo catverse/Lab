@@ -17,6 +17,7 @@ final class Launch: NSWindow {
         isReleasedWhenClosed = false
         
         let title = Label(.key("Launch.title"), .light(25))
+        title.textColor = .headerTextColor
         contentView!.addSubview(title)
         
         let button = Button(.key("Launch.button"), self, #selector(open))
@@ -127,7 +128,7 @@ private final class Item: Control {
         
         url.topAnchor.constraint(equalTo: name.bottomAnchor, constant: 5).isActive = true
         url.leftAnchor.constraint(equalTo: name.leftAnchor).isActive = true
-        url.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor, constant: -10).isActive = true
+        url.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor, constant: -20).isActive = true
     }
     
     override func updateLayer() {

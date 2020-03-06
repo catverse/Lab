@@ -3,6 +3,8 @@ import AppKit
 import Combine
 
 final class Window: NSWindow {
+    private weak var sideScroll: Scroll!
+    private weak var contentScroll: Scroll!
     private var url: URL?
     private var sub: AnyCancellable?
     
@@ -22,6 +24,7 @@ final class Window: NSWindow {
         contentView!.addSubview(blur)
         
         let title = Label(bookmark.id.deletingPathExtension().lastPathComponent, .medium(12))
+        title.textColor = .tertiaryLabelColor
         contentView!.addSubview(title)
         
         let separator = Separator()
@@ -29,6 +32,11 @@ final class Window: NSWindow {
         
         let sideScroll = Scroll()
         contentView!.addSubview(sideScroll)
+        self.sideScroll = sideScroll
+        
+        let contentScroll = Scroll()
+        contentView!.addSubview(contentScroll)
+        self.contentScroll = contentScroll
         
         blur.topAnchor.constraint(equalTo: contentView!.topAnchor).isActive = true
         blur.leftAnchor.constraint(equalTo: contentView!.leftAnchor).isActive = true
@@ -37,13 +45,19 @@ final class Window: NSWindow {
         
         separator.topAnchor.constraint(equalTo: blur.bottomAnchor, constant: 1).isActive = true
         separator.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor, constant: -1).isActive = true
-        separator.leftAnchor.constraint(equalTo: contentView!.leftAnchor, constant: 200).isActive = true
+        separator.leftAnchor.constraint(equalTo: sideScroll.right).isActive = true
         
         sideScroll.topAnchor.constraint(equalTo: blur.bottomAnchor, constant: 1).isActive = true
         sideScroll.leftAnchor.constraint(equalTo: contentView!.leftAnchor).isActive = true
         sideScroll.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor, constant: -1).isActive = true
         sideScroll.widthAnchor.constraint(equalToConstant: 200).isActive = true
         sideScroll.width.constraint(equalTo: sideScroll.widthAnchor).isActive = true
+        
+        contentScroll.topAnchor.constraint(equalTo: blur.bottomAnchor, constant: 1).isActive = true
+        contentScroll.leftAnchor.constraint(equalTo: separator.rightAnchor).isActive = true
+        contentScroll.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor, constant: -1).isActive = true
+        contentScroll.rightAnchor.constraint(equalTo: contentView!.rightAnchor).isActive = true
+        contentScroll.width.constraint(equalTo: contentScroll.widthAnchor).isActive = true
         
         title.leftAnchor.constraint(equalTo: contentView!.leftAnchor, constant: 80).isActive = true
         title.centerYAnchor.constraint(equalTo: blur.centerYAnchor).isActive = true
@@ -80,7 +94,10 @@ final class Window: NSWindow {
     }
     
     @objc private func click(_ item: Item) {
+        guard !item.selected else { return }
+        sideScroll.views.map { $0 as! Item }.forEach { $0.selected = false }
         item.selected = true
+        contentScroll.views.forEach { $0.removeFromSuperview() }
     }
 }
 
