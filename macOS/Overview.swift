@@ -5,6 +5,7 @@ final class Overview: Scroll {
     var node: Node! {
         didSet {
             header.items.stringValue = formatter.string(from: .init(value: node.items.count))! + .key(node.items.count == 1 ? "Overview.item" : "Overview.items")
+            isHidden = false
         }
     }
     
@@ -14,6 +15,7 @@ final class Overview: Scroll {
     required init?(coder: NSCoder) { nil }
     override init() {
         super.init()
+        isHidden = true
         
         let header = Header()
         add(header)
@@ -25,4 +27,8 @@ final class Overview: Scroll {
         header.leftAnchor.constraint(equalTo: left).isActive = true
         header.rightAnchor.constraint(equalTo: right).isActive = true
     }
+}
+
+final private class Item: NSView {
+    
 }

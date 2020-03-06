@@ -2,3 +2,4 @@ Launch.title="Balam Lab";
 Launch.button="Open Balam Database";
 Overview.item=" item";
 Overview.items=" items";
+Header.properties="Properties";
