@@ -7,7 +7,6 @@ final class Label: NSTextField {
     override func acceptsFirstMouse(for: NSEvent?) -> Bool { false }
     
     required init?(coder: NSCoder) { nil }
-
     init(_ string: String, _ font: NSFont) {
         super.init(frame: .zero)
         stringValue = string

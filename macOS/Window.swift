@@ -3,8 +3,8 @@ import AppKit
 import Combine
 
 final class Window: NSWindow {
-    private weak var sideScroll: Scroll!
-    private weak var contentScroll: Scroll!
+    private weak var overview: Overview!
+    private weak var scroll: Scroll!
     private var url: URL?
     private var sub: AnyCancellable?
     
@@ -30,13 +30,13 @@ final class Window: NSWindow {
         let separator = Separator()
         contentView!.addSubview(separator)
         
-        let sideScroll = Scroll()
-        contentView!.addSubview(sideScroll)
-        self.sideScroll = sideScroll
+        let scroll = Scroll()
+        contentView!.addSubview(scroll)
+        self.scroll = scroll
         
-        let contentScroll = Scroll()
-        contentView!.addSubview(contentScroll)
-        self.contentScroll = contentScroll
+        let overview = Overview()
+        contentView!.addSubview(overview)
+        self.overview = overview
         
         blur.topAnchor.constraint(equalTo: contentView!.topAnchor).isActive = true
         blur.leftAnchor.constraint(equalTo: contentView!.leftAnchor).isActive = true
@@ -45,19 +45,19 @@ final class Window: NSWindow {
         
         separator.topAnchor.constraint(equalTo: blur.bottomAnchor, constant: 1).isActive = true
         separator.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor, constant: -1).isActive = true
-        separator.leftAnchor.constraint(equalTo: sideScroll.right).isActive = true
+        separator.leftAnchor.constraint(equalTo: scroll.right).isActive = true
         
-        sideScroll.topAnchor.constraint(equalTo: blur.bottomAnchor, constant: 1).isActive = true
-        sideScroll.leftAnchor.constraint(equalTo: contentView!.leftAnchor).isActive = true
-        sideScroll.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor, constant: -1).isActive = true
-        sideScroll.widthAnchor.constraint(equalToConstant: 200).isActive = true
-        sideScroll.width.constraint(equalTo: sideScroll.widthAnchor).isActive = true
+        scroll.topAnchor.constraint(equalTo: blur.bottomAnchor, constant: 1).isActive = true
+        scroll.leftAnchor.constraint(equalTo: contentView!.leftAnchor).isActive = true
+        scroll.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor, constant: -1).isActive = true
+        scroll.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        scroll.width.constraint(equalTo: scroll.widthAnchor).isActive = true
         
-        contentScroll.topAnchor.constraint(equalTo: blur.bottomAnchor, constant: 1).isActive = true
-        contentScroll.leftAnchor.constraint(equalTo: separator.rightAnchor).isActive = true
-        contentScroll.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor, constant: -1).isActive = true
-        contentScroll.rightAnchor.constraint(equalTo: contentView!.rightAnchor).isActive = true
-        contentScroll.width.constraint(equalTo: contentScroll.widthAnchor).isActive = true
+        overview.topAnchor.constraint(equalTo: blur.bottomAnchor, constant: 1).isActive = true
+        overview.leftAnchor.constraint(equalTo: separator.rightAnchor).isActive = true
+        overview.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor, constant: -1).isActive = true
+        overview.rightAnchor.constraint(equalTo: contentView!.rightAnchor).isActive = true
+        overview.width.constraint(equalTo: overview.widthAnchor).isActive = true
         
         title.leftAnchor.constraint(equalTo: contentView!.leftAnchor, constant: 80).isActive = true
         title.centerYAnchor.constraint(equalTo: blur.centerYAnchor).isActive = true
@@ -71,17 +71,17 @@ final class Window: NSWindow {
         
         sub = Balam.nodes(url).receive(on: DispatchQueue.main).sink { [weak self] in
             guard let self = self else { return }
-            var top = sideScroll.top
+            var top = scroll.top
             $0.forEach {
                 let item = Item($0, self, #selector(self.click(_:)))
-                sideScroll.add(item)
+                scroll.add(item)
                 
                 item.topAnchor.constraint(equalTo: top).isActive = true
-                item.leftAnchor.constraint(equalTo: sideScroll.left).isActive = true
-                item.widthAnchor.constraint(equalTo: sideScroll.width).isActive = true
+                item.leftAnchor.constraint(equalTo: scroll.left).isActive = true
+                item.widthAnchor.constraint(equalTo: scroll.width).isActive = true
                 top = item.bottomAnchor
             }
-            sideScroll.bottom.constraint(greaterThanOrEqualTo: top).isActive = true
+            scroll.bottom.constraint(greaterThanOrEqualTo: top).isActive = true
         }
     }
     
@@ -95,9 +95,9 @@ final class Window: NSWindow {
     
     @objc private func click(_ item: Item) {
         guard !item.selected else { return }
-        sideScroll.views.map { $0 as! Item }.forEach { $0.selected = false }
+        scroll.views.map { $0 as! Item }.forEach { $0.selected = false }
         item.selected = true
-        contentScroll.views.forEach { $0.removeFromSuperview() }
+        overview.node = item.node
     }
 }
 
