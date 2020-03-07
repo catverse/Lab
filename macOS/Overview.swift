@@ -36,7 +36,7 @@ final class Overview: NSView {
     }
     
     private func render(_ node: Node) {
-        subviews.compactMap { $0 as? Item }.forEach { $0.removeFromSuperview() }
+        subviews.filter { $0 is Item }.forEach { $0.removeFromSuperview() }
         var top = topAnchor
         node.properties.map(item(_:)).sorted { $0.name.stringValue < $1.name.stringValue }.forEach {
             addSubview($0)
@@ -51,12 +51,7 @@ final class Overview: NSView {
     }
     
     private func item(_ property: Property) -> Item {
-        switch property {
-        case let concrete as Property.Concrete:
-            return .init(concrete.name, type: String(describing: type(of: concrete)))
-        default:
-            return .init("", type: "")
-        }
+        { .init($0.0, type: $0.1) } (property.description)
     }
 }
 

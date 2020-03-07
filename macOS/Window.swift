@@ -76,7 +76,7 @@ final class Window: NSWindow {
         overview.leftAnchor.constraint(equalTo: content.left, constant: 30).isActive = true
         overview.rightAnchor.constraint(greaterThanOrEqualTo: content.rightAnchor, constant: -30).isActive = true
         
-        items.topAnchor.constraint(equalTo: overview.bottomAnchor, constant: 40).isActive = true
+        items.topAnchor.constraint(equalTo: overview.bottomAnchor, constant: 50).isActive = true
         items.leftAnchor.constraint(equalTo: content.left, constant: 30).isActive = true
         items.rightAnchor.constraint(greaterThanOrEqualTo: content.rightAnchor, constant: -30).isActive = true
         
@@ -121,6 +121,7 @@ final class Window: NSWindow {
         list.views.map { $0 as! Item }.forEach { $0.selected = false }
         item.selected = true
         overview.node = item.node
+        items.node = item.node
     }
 }
 

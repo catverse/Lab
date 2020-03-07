@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CE003CFE2413AAD100099A47 /* Items.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE003CFD2413AAD100099A47 /* Items.swift */; };
+		CE003D002413B5DF00099A47 /* Property.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE003CFF2413B5DF00099A47 /* Property.swift */; };
 		CE25331823F9885F004311F0 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE25331723F9885F004311F0 /* App.swift */; };
 		CE25331C23F98860004311F0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE25331B23F98860004311F0 /* Assets.xcassets */; };
 		CE25332A23F98EF6004311F0 /* Balam in Frameworks */ = {isa = PBXBuildFile; productRef = CE25332923F98EF6004311F0 /* Balam */; };
@@ -28,6 +29,7 @@
 
 /* Begin PBXFileReference section */
 		CE003CFD2413AAD100099A47 /* Items.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Items.swift; sourceTree = "<group>"; };
+		CE003CFF2413B5DF00099A47 /* Property.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Property.swift; sourceTree = "<group>"; };
 		CE25331723F9885F004311F0 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		CE25331B23F98860004311F0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CE25332023F98860004311F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 				CEE653B0240BCD01000FB786 /* Label.swift */,
 				CE661858240A920D009DAD5B /* Launch.swift */,
 				CE9C06E024121E5B00F96BFF /* Overview.swift */,
+				CE003CFF2413B5DF00099A47 /* Property.swift */,
 				CEE653AC240BCBE5000FB786 /* Scroll.swift */,
 				CE3476E7240CDC7B00686DBF /* Separator.swift */,
 				CEE653AA240BCAFA000FB786 /* String.swift */,
@@ -172,6 +175,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE003D002413B5DF00099A47 /* Property.swift in Sources */,
 				CE9C06E124121E5B00F96BFF /* Overview.swift in Sources */,
 				CE9C06E324121FE500F96BFF /* Header.swift in Sources */,
 				CE25331823F9885F004311F0 /* App.swift in Sources */,
