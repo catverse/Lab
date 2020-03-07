@@ -1,6 +1,6 @@
 import AppKit
 
-class Scroll: NSScrollView {
+final class Scroll: NSScrollView {
     var views: [NSView] { documentView!.subviews }
     var top: NSLayoutYAxisAnchor { documentView!.topAnchor }
     var bottom: NSLayoutYAxisAnchor { documentView!.bottomAnchor }

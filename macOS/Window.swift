@@ -4,13 +4,15 @@ import Combine
 
 final class Window: NSWindow {
     private weak var overview: Overview!
-    private weak var scroll: Scroll!
+    private weak var items: Items!
+    private weak var list: Scroll!
     private var url: URL?
     private var sub: AnyCancellable?
+    private let formatter = NumberFormatter()
     
     init(_ bookmark: Bookmark) {
         super.init(contentRect: .init(x: 0, y: 0, width: 900, height: 600), styleMask: [.borderless, .miniaturizable, .resizable, .closable, .titled, .unifiedTitleAndToolbar, .fullSizeContentView], backing: .buffered, defer: false)
-        minSize = .init(width: 400, height: 300)
+        minSize = .init(width: 300, height: 200)
         center()
         titlebarAppearsTransparent = true
         titleVisibility = .hidden
@@ -30,13 +32,20 @@ final class Window: NSWindow {
         let separator = Separator()
         contentView!.addSubview(separator)
         
-        let scroll = Scroll()
-        contentView!.addSubview(scroll)
-        self.scroll = scroll
+        let list = Scroll()
+        contentView!.addSubview(list)
+        self.list = list
+        
+        let content = Scroll()
+        contentView!.addSubview(content)
         
         let overview = Overview()
-        contentView!.addSubview(overview)
+        content.add(overview)
         self.overview = overview
+        
+        let items = Items()
+        content.add(items)
+        self.items = items
         
         blur.topAnchor.constraint(equalTo: contentView!.topAnchor).isActive = true
         blur.leftAnchor.constraint(equalTo: contentView!.leftAnchor).isActive = true
@@ -45,19 +54,31 @@ final class Window: NSWindow {
         
         separator.topAnchor.constraint(equalTo: blur.bottomAnchor, constant: 1).isActive = true
         separator.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor, constant: -1).isActive = true
-        separator.leftAnchor.constraint(equalTo: scroll.right).isActive = true
+        separator.leftAnchor.constraint(equalTo: list.right).isActive = true
         
-        scroll.topAnchor.constraint(equalTo: blur.bottomAnchor, constant: 1).isActive = true
-        scroll.leftAnchor.constraint(equalTo: contentView!.leftAnchor).isActive = true
-        scroll.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor, constant: -1).isActive = true
-        scroll.widthAnchor.constraint(equalToConstant: 200).isActive = true
-        scroll.width.constraint(equalTo: scroll.widthAnchor).isActive = true
+        list.topAnchor.constraint(equalTo: blur.bottomAnchor, constant: 1).isActive = true
+        list.leftAnchor.constraint(equalTo: contentView!.leftAnchor).isActive = true
+        list.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor, constant: -1).isActive = true
+        list.widthAnchor.constraint(equalToConstant: 220).isActive = true
+        list.width.constraint(equalTo: list.widthAnchor).isActive = true
         
-        overview.topAnchor.constraint(equalTo: blur.bottomAnchor, constant: 1).isActive = true
-        overview.leftAnchor.constraint(equalTo: separator.rightAnchor).isActive = true
-        overview.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor, constant: -1).isActive = true
-        overview.rightAnchor.constraint(equalTo: contentView!.rightAnchor).isActive = true
-        overview.width.constraint(equalTo: overview.widthAnchor).isActive = true
+        content.topAnchor.constraint(equalTo: blur.bottomAnchor, constant: 1).isActive = true
+        content.leftAnchor.constraint(equalTo: separator.rightAnchor).isActive = true
+        content.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor, constant: -1).isActive = true
+        content.rightAnchor.constraint(equalTo: contentView!.rightAnchor).isActive = true
+        content.right.constraint(greaterThanOrEqualTo: content.rightAnchor).isActive = true
+        content.right.constraint(greaterThanOrEqualTo: overview.rightAnchor, constant: 30).isActive = true
+        content.right.constraint(greaterThanOrEqualTo: items.rightAnchor, constant: 30).isActive = true
+        content.bottom.constraint(greaterThanOrEqualTo: items.bottomAnchor, constant: 20).isActive = true
+        content.bottom.constraint(greaterThanOrEqualTo: content.bottomAnchor).isActive = true
+        
+        overview.topAnchor.constraint(equalTo: content.top, constant: 20).isActive = true
+        overview.leftAnchor.constraint(equalTo: content.left, constant: 30).isActive = true
+        overview.rightAnchor.constraint(greaterThanOrEqualTo: content.rightAnchor, constant: -30).isActive = true
+        
+        items.topAnchor.constraint(equalTo: overview.bottomAnchor, constant: 40).isActive = true
+        items.leftAnchor.constraint(equalTo: content.left, constant: 30).isActive = true
+        items.rightAnchor.constraint(greaterThanOrEqualTo: content.rightAnchor, constant: -30).isActive = true
         
         title.leftAnchor.constraint(equalTo: contentView!.leftAnchor, constant: 80).isActive = true
         title.centerYAnchor.constraint(equalTo: blur.centerYAnchor).isActive = true
@@ -71,18 +92,20 @@ final class Window: NSWindow {
         
         sub = Balam.nodes(url).receive(on: DispatchQueue.main).sink { [weak self] in
             guard let self = self else { return }
-            var top = scroll.top
-            $0.forEach {
-                let item = Item($0, self, #selector(self.click(_:)))
-                scroll.add(item)
-                
-                item.topAnchor.constraint(equalTo: top).isActive = true
-                item.leftAnchor.constraint(equalTo: scroll.left).isActive = true
-                item.widthAnchor.constraint(equalTo: scroll.width).isActive = true
-                top = item.bottomAnchor
+            var top = list.top
+            $0.map(self.item(_:)).forEach {
+                list.add($0)
+                $0.topAnchor.constraint(equalTo: top).isActive = true
+                $0.leftAnchor.constraint(equalTo: list.left).isActive = true
+                $0.widthAnchor.constraint(equalTo: list.width).isActive = true
+                top = $0.bottomAnchor
             }
-            scroll.bottom.constraint(greaterThanOrEqualTo: top).isActive = true
+            list.bottom.constraint(greaterThanOrEqualTo: top).isActive = true
         }
+    }
+    
+    private func item(_ node: Node) -> Item {
+        .init(node, formatter.string(from: .init(value: node.items.count))! + .key(node.items.count == 1 ? "Window.item" : "Window.items"), self, #selector(click(_:)))
     }
     
     override func close() {
@@ -95,7 +118,7 @@ final class Window: NSWindow {
     
     @objc private func click(_ item: Item) {
         guard !item.selected else { return }
-        scroll.views.map { $0 as! Item }.forEach { $0.selected = false }
+        list.views.map { $0 as! Item }.forEach { $0.selected = false }
         item.selected = true
         overview.node = item.node
     }
@@ -111,7 +134,7 @@ private final class Item: Control {
     fileprivate let node: Node
     
     required init?(coder: NSCoder) { nil }
-    init(_ node: Node, _ target: AnyObject, _ action: Selector) {
+    init(_ node: Node, _ items: String, _ target: AnyObject, _ action: Selector) {
         self.node = node
         super.init(target, action)
         wantsLayer = true
@@ -119,10 +142,19 @@ private final class Item: Control {
         let name = Label(node.name, .medium(15))
         addSubview(name)
         
+        let items = Label(items, .regular(12))
+        items.textColor = .secondaryLabelColor
+        items.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        addSubview(items)
+        
         heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         name.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         name.leftAnchor.constraint(equalTo: leftAnchor, constant: 20).isActive = true
+        
+        items.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        items.leftAnchor.constraint(equalTo: name.rightAnchor, constant: 2).isActive = true
+        items.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor, constant: -20).isActive = true
     }
     
     override func updateLayer() {

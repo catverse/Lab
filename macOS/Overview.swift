@@ -1,46 +1,53 @@
 import Balam
 import AppKit
 
-final class Overview: Scroll {
+final class Overview: NSView {
     var node: Node! {
         didSet {
-            header.items.stringValue = formatter.string(from: .init(value: node.items.count))! + .key(node.items.count == 1 ? "Overview.item" : "Overview.items")
-            isHidden = false
             render(node)
         }
     }
     
-    private weak var header: Header!
-    private let formatter = NumberFormatter()
-    
     required init?(coder: NSCoder) { nil }
-    override init() {
-        super.init()
-        isHidden = true
+    init() {
+        super.init(frame: .zero)
+        translatesAutoresizingMaskIntoConstraints = false
         
         let header = Header()
-        add(header)
-        self.header = header
+        addSubview(header)
         
-        bottom.constraint(greaterThanOrEqualTo: header.bottomAnchor).isActive = true
+        let title = Label(.key("Overview.properties"), .medium(16))
+        title.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        addSubview(title)
         
-        header.topAnchor.constraint(equalTo: top).isActive = true
-        header.leftAnchor.constraint(equalTo: left).isActive = true
-        header.rightAnchor.constraint(equalTo: right).isActive = true
+        let height = heightAnchor.constraint(equalToConstant: 0)
+        height.priority = .defaultLow
+        height.isActive = true
+
+        bottomAnchor.constraint(greaterThanOrEqualTo: header.bottomAnchor).isActive = true
+        rightAnchor.constraint(greaterThanOrEqualTo: title.rightAnchor).isActive = true
+        
+        header.topAnchor.constraint(equalTo: topAnchor, constant: 30).isActive = true
+        header.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        header.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        
+        title.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        title.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
     }
     
     private func render(_ node: Node) {
-        views.compactMap { $0 as? Item }.forEach { $0.removeFromSuperview() }
-        var top = header.bottomAnchor
-        node.properties.map(item(_:)).forEach {
-            add($0)
-            
-            $0.topAnchor.constraint(equalTo: top, constant: 15).isActive = true
-            $0.leftAnchor.constraint(equalTo: left, constant: 30).isActive = true
-            $0.rightAnchor.constraint(equalTo: right, constant: -30).isActive = true
+        subviews.compactMap { $0 as? Item }.forEach { $0.removeFromSuperview() }
+        var top = topAnchor
+        node.properties.map(item(_:)).sorted { $0.name.stringValue < $1.name.stringValue }.forEach {
+            addSubview($0)
+            rightAnchor.constraint(greaterThanOrEqualTo: $0.rightAnchor).isActive = true
+            $0.topAnchor.constraint(equalTo: top, constant: top == topAnchor ? 60 : 15).isActive = true
+            $0.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
             top = $0.bottomAnchor
         }
-        bottom.constraint(equalTo: top, constant: 15).isActive = true
+        if top != topAnchor {
+            bottomAnchor.constraint(equalTo: top, constant: 15).isActive = true
+        }
     }
     
     private func item(_ property: Property) -> Item {
@@ -54,6 +61,8 @@ final class Overview: Scroll {
 }
 
 final private class Item: NSView {
+    private(set) weak var name: Label!
+    
     required init?(coder: NSCoder) { nil }
     init(_ name: String, type: String) {
         super.init(frame: .zero)
@@ -61,17 +70,19 @@ final private class Item: NSView {
         
         let name = Label(name, .regular(14))
         addSubview(name)
+        self.name = name
         
         let type = Label(": " + type, .regular(12))
         type.textColor = .secondaryLabelColor
         addSubview(type)
         
         bottomAnchor.constraint(equalTo: name.bottomAnchor).isActive = true
+        rightAnchor.constraint(equalTo: type.rightAnchor).isActive = true
         
         name.topAnchor.constraint(equalTo: topAnchor).isActive = true
         name.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
         
         type.bottomAnchor.constraint(equalTo: name.bottomAnchor).isActive = true
-        type.leftAnchor.constraint(equalTo: name.rightAnchor, constant: 2).isActive = true
+        type.leftAnchor.constraint(equalTo: name.rightAnchor).isActive = true
     }
 }
