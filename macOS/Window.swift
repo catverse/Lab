@@ -10,7 +10,7 @@ final class Window: NSWindow {
     
     init(_ bookmark: Bookmark) {
         super.init(contentRect: .init(x: 0, y: 0, width: 900, height: 600), styleMask: [.borderless, .miniaturizable, .resizable, .closable, .titled, .unifiedTitleAndToolbar, .fullSizeContentView], backing: .buffered, defer: false)
-        minSize = .init(width: 300, height: 300)
+        minSize = .init(width: 400, height: 300)
         center()
         titlebarAppearsTransparent = true
         titleVisibility = .hidden
@@ -24,7 +24,7 @@ final class Window: NSWindow {
         contentView!.addSubview(blur)
         
         let title = Label(bookmark.id.deletingPathExtension().lastPathComponent, .medium(12))
-        title.textColor = .tertiaryLabelColor
+        title.textColor = .secondaryLabelColor
         contentView!.addSubview(title)
         
         let separator = Separator()
