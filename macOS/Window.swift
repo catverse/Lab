@@ -65,7 +65,7 @@ final class Window: NSWindow {
         content.topAnchor.constraint(equalTo: blur.bottomAnchor, constant: 1).isActive = true
         content.leftAnchor.constraint(equalTo: separator.rightAnchor).isActive = true
         content.bottomAnchor.constraint(equalTo: contentView!.bottomAnchor, constant: -1).isActive = true
-        content.rightAnchor.constraint(equalTo: contentView!.rightAnchor).isActive = true
+        content.rightAnchor.constraint(equalTo: contentView!.rightAnchor, constant: -1).isActive = true
         content.right.constraint(greaterThanOrEqualTo: content.rightAnchor).isActive = true
         content.right.constraint(greaterThanOrEqualTo: overview.rightAnchor, constant: 30).isActive = true
         content.right.constraint(greaterThanOrEqualTo: items.rightAnchor, constant: 30).isActive = true
@@ -74,11 +74,11 @@ final class Window: NSWindow {
         
         overview.topAnchor.constraint(equalTo: content.top, constant: 20).isActive = true
         overview.leftAnchor.constraint(equalTo: content.left, constant: 30).isActive = true
-        overview.rightAnchor.constraint(greaterThanOrEqualTo: content.rightAnchor, constant: -30).isActive = true
+        overview.rightAnchor.constraint(greaterThanOrEqualTo: content.right, constant: -30).isActive = true
         
         items.topAnchor.constraint(equalTo: overview.bottomAnchor, constant: 50).isActive = true
         items.leftAnchor.constraint(equalTo: content.left, constant: 30).isActive = true
-        items.rightAnchor.constraint(greaterThanOrEqualTo: content.rightAnchor, constant: -30).isActive = true
+        items.rightAnchor.constraint(greaterThanOrEqualTo: content.right, constant: -30).isActive = true
         
         title.leftAnchor.constraint(equalTo: contentView!.leftAnchor, constant: 80).isActive = true
         title.centerYAnchor.constraint(equalTo: blur.centerYAnchor).isActive = true

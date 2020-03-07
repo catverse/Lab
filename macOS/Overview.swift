@@ -37,6 +37,7 @@ final class Overview: NSView {
     
     private func render(_ node: Node) {
         subviews.filter { $0 is Item }.forEach { $0.removeFromSuperview() }
+        guard !node.properties.isEmpty else { return }
         var top = topAnchor
         node.properties.map(item(_:)).sorted { $0.name.stringValue < $1.name.stringValue }.forEach {
             addSubview($0)
@@ -45,9 +46,7 @@ final class Overview: NSView {
             $0.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
             top = $0.bottomAnchor
         }
-        if top != topAnchor {
-            bottomAnchor.constraint(equalTo: top, constant: 15).isActive = true
-        }
+        bottomAnchor.constraint(equalTo: top, constant: 15).isActive = true
     }
     
     private func item(_ property: Property) -> Item {
