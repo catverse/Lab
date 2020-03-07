@@ -31,7 +31,10 @@ final class Items: NSView {
         subviews.filter { !($0 is Header) }.forEach { $0.removeFromSuperview() }
         guard !node.properties.isEmpty else { return }
         var left = leftAnchor
-        let sections = node.properties.map { $0.description.0 }.sorted().reduce(into: [String : Section]()) {
+        let properties = node.properties.map { $0.description }.reduce(into: [String : String] ()) {
+            $0[$1.0] = $1.1
+        }
+        let sections = properties.keys.sorted().reduce(into: [String : Section]()) {
             $0[$1] = {
                 addSubview($0)
                 $0.topAnchor.constraint(equalTo: topAnchor).isActive = true
@@ -45,7 +48,7 @@ final class Items: NSView {
         var top = CGFloat(50)
         node.items.map { try! JSONSerialization.jsonObject(with: $0) as! [String : Any] }.forEach {
             $0.forEach {
-                let item = make($0.1)
+                let item = make($0.1, type: properties[$0.0]!)
                 addSubview(item)
                 
                 item.topAnchor.constraint(equalTo: topAnchor, constant: top).isActive = true
@@ -57,7 +60,7 @@ final class Items: NSView {
         heightAnchor.constraint(equalToConstant: top).isActive = true
     }
     
-    private func make(_ value: Any) -> Item {
+    private func make(_ value: Any, type: String) -> Item {
         .init("\(value)")
     }
 }
