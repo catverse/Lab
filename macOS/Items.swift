@@ -8,10 +8,15 @@ final class Items: NSView {
         }
     }
     
+    private let numbers = NumberFormatter()
+    private let dates = DateFormatter()
+    
     required init?(coder: NSCoder) { nil }
     init() {
         super.init(frame: .zero)
         translatesAutoresizingMaskIntoConstraints = false
+        dates.timeStyle = .short
+        dates.dateStyle = .short
         
         let header = Header()
         addSubview(header)
@@ -53,7 +58,7 @@ final class Items: NSView {
                 
                 item.topAnchor.constraint(equalTo: topAnchor, constant: top).isActive = true
                 item.leftAnchor.constraint(equalTo: sections[$0.0]!.leftAnchor).isActive = true
-                item.rightAnchor.constraint(lessThanOrEqualTo: sections[$0.0]!.rightAnchor).isActive = true
+                item.rightAnchor.constraint(equalTo: sections[$0.0]!.rightAnchor).isActive = true
             }
             top += 30
         }
@@ -61,7 +66,28 @@ final class Items: NSView {
     }
     
     private func make(_ value: Any, type: String) -> Item {
-        .init("\(value)")
+        switch type {
+        case "Data": return data(Data((value as! String).utf8).count)
+        case "Date": return calendar(.init(timeIntervalSince1970: value as! TimeInterval))
+        case "String", "URL", "UUID": return text(value as! String)
+        default: return numeric(value as? Double ?? 0)
+        }
+    }
+    
+    private func data(_ size: Int) -> Item {
+        .init(ByteCountFormatter.string(fromByteCount: .init(size), countStyle: .file), align: .right)
+    }
+    
+    private func numeric(_ value: Double) -> Item {
+        .init(numbers.string(from: .init(value: value))!, align: .right)
+    }
+    
+    private func calendar(_ date: Date) -> Item {
+        .init(dates.string(from: date), align: .left)
+    }
+    
+    private func text(_ value: String) -> Item {
+        .init(value, align: .left)
     }
 }
 
@@ -89,10 +115,8 @@ private final class Section: NSView {
 }
 
 private final class Item: NSView {
-    private(set) weak var value: Label!
-    
     required init?(coder: NSCoder) { nil }
-    init(_ value: String) {
+    init(_ value: String, align: NSTextAlignment) {
         super.init(frame: .zero)
         translatesAutoresizingMaskIntoConstraints = false
         
@@ -100,6 +124,7 @@ private final class Item: NSView {
         value.maximumNumberOfLines = 1
         value.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         value.lineBreakMode = .byTruncatingMiddle
+        value.alignment = align
         addSubview(value)
         
         let width = widthAnchor.constraint(equalToConstant: 0)
@@ -110,6 +135,6 @@ private final class Item: NSView {
         
         value.topAnchor.constraint(equalTo: topAnchor).isActive = true
         value.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
-        value.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor).isActive = true
+        value.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
     }
 }
