@@ -38,6 +38,7 @@
 		CE25332623F98CA0004311F0 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		CE25332723F98CA0004311F0 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		CE3476E7240CDC7B00686DBF /* Separator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Separator.swift; sourceTree = "<group>"; };
+		CE5921312415573F00D651B8 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		CE661856240A8EF7009DAD5B /* Window.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Window.swift; sourceTree = "<group>"; };
 		CE661858240A920D009DAD5B /* Launch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Launch.swift; sourceTree = "<group>"; };
 		CE9C06E024121E5B00F96BFF /* Overview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Overview.swift; sourceTree = "<group>"; };
@@ -70,6 +71,7 @@
 				CE25332623F98CA0004311F0 /* .gitignore */,
 				CE25332723F98CA0004311F0 /* LICENSE */,
 				CE25332523F98875004311F0 /* Lab.app */,
+				CE5921312415573F00D651B8 /* README.md */,
 				CE25331623F9885F004311F0 /* macOS */,
 			);
 			sourceTree = "<group>";
